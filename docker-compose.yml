@@ -17,10 +17,30 @@ services:
     volumes:
       - .:/workspace
       - ./mlruns:/mlruns
+    depends_on:
+      - flower
+      - mlflow
+
+  flower:
+    image: flower:${SERVICE}
+    container_name: flower_${SERVICE}
+    build:
+      dockerfile: services/flower/Dockerfile
+      context: .
     ports:
       - "8080:8080"
-    depends_on:
-      - mlflow
+    command:
+      [
+        "python",
+        "-m",
+        "src.server",
+        "--server_strategy",
+        "FedAdagrad",
+        "--model_path",
+        "src/tf_training_pipeline/utils/get_model/model_files/convnext.h5"
+      ]
+    volumes:
+      - .:/opt/ml/code
 
   mlflow:
     image: mlflow:${SERVICE}
@@ -38,3 +58,4 @@ services:
       - ./mlruns:/mlruns
     ports:
       - "50000:50000"
+
