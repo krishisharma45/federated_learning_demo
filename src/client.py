@@ -48,4 +48,4 @@ class MnistClient(fl.client.NumPyClient):
         return loss, len(x_test), {"accuracy": accuracy}
 
 
-fl.client.start_numpy_client(server_address="flower_federated_learning_demo:8080", client=MnistClient())
+fl.client.start_numpy_client(server_address="0.0.0.0:8080", client=MnistClient())
