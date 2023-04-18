@@ -5,7 +5,7 @@
 source bin/setup_environment.sh
 
 docker-compose run --rm -p 8888:8888 \
-  --entrypoint jupyter "$SERVICE" lab \
+  --entrypoint jupyter flower lab \
   --ip=0.0.0.0 \
   --port=8888 \
   --notebook-dir=notebooks \

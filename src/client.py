@@ -1,34 +1,51 @@
-from typing import List, OrderedDict
-
 import flwr as fl
 import numpy as np
-import torch
+
+# import tensorflow as tf
+
+from tensorflow.keras.datasets import mnist
+
+from src.model import CreateMnistModel
+import requests
+requests.packages.urllib3.disable_warnings()
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    # Legacy Python that doesn't verify HTTPS certificates by default
+    pass
+else:
+    # Handle target environment that doesn't support HTTPS verification
+    ssl._create_default_https_context = _create_unverified_https_context
 
 
-class FlowerClient(fl.client.NumPyClient):
-    def __init__(self, net, trainloader, valloader, model):
-        self.net = net
-        self.trainloader = trainloader
-        self.valloader = valloader
-        self.model = model
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-    def get_parameters(self, config):
-        return self.get_parameters(self.net)
+# Normalize
+image_size = x_train.shape[1]
+x_train = np.reshape(x_train, [-1, image_size, image_size, 1])
+x_test = np.reshape(x_test, [-1, image_size, image_size, 1])
+x_train = x_train.astype("float32") / 255
+x_test = x_test.astype("float32") / 255
+
+model = CreateMnistModel().run()
+
+
+class MnistClient(fl.client.NumPyClient):
+    def get_parameters(self):
+        return model.get_weights()
 
     def fit(self, parameters, config):
-        self.set_parameters(self.net, parameters)
-        self.model.train(self.net, self.trainloader, epochs=1)
-        return self.get_parameters(self.net), len(self.trainloader), {}
+        model.set_weights(parameters)
+        model.fit(x_train, y_train, epochs=5, batch_size=32, steps_per_epoch=3)
+        print("Epoch fitting complete.")
+        return model.get_weights(), len(x_train), {}
 
     def evaluate(self, parameters, config):
-        self.set_parameters(self.net, parameters)
-        loss, accuracy = self.model.test(self.net, self.valloader)
-        return float(loss), len(self.valloader), {"accuracy": float(accuracy)}
+        model.set_weights(parameters)
+        loss, accuracy = model.evaluate(x_test, y_test)
+        return loss, len(x_test), {"accuracy": accuracy}
 
-    def get_parameters(self, net) -> List[np.ndarray]:
-        return [val.cpu().numpy() for _, val in net.state_dict().items()]
 
-    def set_parameters(self, net, parameters: List[np.ndarray]):
-        params_dict = zip(net.state_dict().keys(), parameters)
-        state_dict = OrderedDict[{k: torch.Tensor(v) for k, v in params_dict}]
-        net.load_state_dict(state_dict, strict=True)
+fl.client.start_numpy_client(server_address="flower_federated_learning_demo:8080", client=MnistClient())
