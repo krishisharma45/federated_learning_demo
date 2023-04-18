@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.2
-FROM python:3.8-slim
+FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
 
 WORKDIR /workspace
 
@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "server.py"]
+CMD ["python", "-m", "src.server"]
