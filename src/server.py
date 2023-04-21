@@ -1,6 +1,6 @@
 import flwr as fl
 
-from src.server_config import ServerConfig, Config
+from src.config.server_config import ServerConfig, Config
 
 if __name__ == "__main__":
     server_config = ServerConfig()

@@ -1,9 +1,9 @@
 import sys
 import flwr as fl
 
-from src.client_config import ClientConfig
-from src.dataset import Dataset
-from src.model import CreateMnistModel
+from src.config.client_config import ClientConfig
+from src.training.dataset import Dataset
+from src.training.model import CreateMnistModel
 
 
 class MnistClient(fl.client.NumPyClient):

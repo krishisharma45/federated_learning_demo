@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    num_rounds: int = 3
+    num_rounds: int = 5
     round_timeout: float = None
 
 
