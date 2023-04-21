@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class ClientConfig(BaseModel):
-    server_address: str = "0.0.0.0"
+    server_address: str = "flower_federated_learning_demo"
     device_id: str
     epochs: int = 5
     batch_size: int = 32
