@@ -28,5 +28,4 @@ class CreateMnistModel:
             loss="sparse_categorical_crossentropy",
             metrics=["accuracy"],
         )
-
         return model

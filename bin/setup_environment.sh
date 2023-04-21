@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# Set up environment variables for Docker Compose and BuildKit
 
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1

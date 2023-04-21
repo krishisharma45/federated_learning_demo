@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Run docker container in bash shell session
+# Connect a new instance of a flower client to the flower server
 
 source bin/setup_environment.sh
 
